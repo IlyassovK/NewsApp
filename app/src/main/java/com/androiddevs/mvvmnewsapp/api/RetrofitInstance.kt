@@ -1,0 +1,30 @@
+package com.androiddevs.mvvmnewsapp.api
+
+import com.androiddevs.mvvmnewsapp.utils.Utils.Companion.BASE_URL
+import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
+
+class RetrofitInstance {
+    companion object{
+        private val retrofit by lazy{
+            // log responses of retrofit. For better debugging
+
+            // to see which request we making and what responses
+            val logging = HttpLoggingInterceptor()
+            // to see body of actually response
+            logging.setLevel(HttpLoggingInterceptor.Level.BODY)
+            val client = OkHttpClient.Builder().addInterceptor(logging).build()
+
+            Retrofit.Builder().baseUrl(BASE_URL)
+                .addConverterFactory(GsonConverterFactory.create())
+                .client(client).build()
+        }
+
+        //api object which we will use to make network request
+        val api by lazy{
+            retrofit.create(NewsAPI::class.java)
+        }
+    }
+}
